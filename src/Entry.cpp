@@ -25,30 +25,36 @@ void safe_localtime(struct tm *ptm, const time_t t) {
 Entry::Entry() {
 }
 
-bool Entry::parse(const std::string& cron_expr) {
-    std::string expr = trimAll(cron_expr);
-    if (expr[0] == '@') {
-        if (expr == "@monthly") {
-            expr = "0 0 0 1 * *";
-        } else if (expr == "@daily") {
-            expr = "0 0 0 * * *";
-        } else if (expr == "@hourly") {
-            expr = "0 0 * * * *";
-        } else if (expr == "@minutely") {
-            expr = "0 * * * * *";
-        } else if (expr == "@weekly") {
-            expr = "0 0 0 * * 0";
-        } else if (expr == "@secondly") {
-            expr = "* * * * * *";
+bool Entry::parse(const std::string &cron_expr) {
+    try {
+        std::string expr = trimAll(cron_expr);
+        if (expr[0] == '@') {
+            if (expr == "@monthly") {
+                expr = "0 0 0 1 * *";
+            } else if (expr == "@daily") {
+                expr = "0 0 0 * * *";
+            } else if (expr == "@hourly") {
+                expr = "0 0 * * * *";
+            } else if (expr == "@minutely") {
+                expr = "0 * * * * *";
+            } else if (expr == "@weekly") {
+                expr = "0 0 0 * * 0";
+            } else if (expr == "@secondly") {
+                expr = "* * * * * *";
+            }
         }
+
+        return second_.parse(stringTok(expr, " ")) &&
+               minute_.parse(stringTok(expr, " ")) &&
+               hour_.parse(stringTok(expr, " ")) &&
+               day_.parse(stringTok(expr, " ")) &&
+               month_.parse(stringTok(expr, " ")) &&
+               week_.parse(stringTok(expr, " "));
+    } catch (std::exception &e) {
+        // log error
     }
 
-    return second_.parse(stringTok(expr, " ")) &&
-           minute_.parse(stringTok(expr, " ")) &&
-           hour_.parse(stringTok(expr, " ")) &&
-           day_.parse(stringTok(expr, " ")) &&
-           month_.parse(stringTok(expr, " ")) &&
-           week_.parse(stringTok(expr, " "));
+    return false;
 }
 
 bool Entry::check(time_t timestamp) {

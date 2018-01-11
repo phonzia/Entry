@@ -178,7 +178,7 @@ bool isIntegerNumber(const std::string &source);
 /// @参数    c  要匹配的字符
 ///
 /// @返回值    返回匹配到c的次数
-size_t countChar(const std::string &source, const char &c);
+long countChar(const std::string &source, const char &c);
 
 /// @简介    根据分隔符分割字符串
 ///         WARNING!!!! This function will modify the source string

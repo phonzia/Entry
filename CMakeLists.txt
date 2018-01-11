@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.8)
-project(Entry)
+set(PROJECT_NAME entry)
+project(${PROJECT_NAME})
+
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-g -Wall -fprofile-arcs -ftest-coverage")
 
+set(TEST_TARGET entry_test)
 
-add_executable(entry_test
+add_executable(${TEST_TARGET}
         src/Entry.cpp
         src/Entry.h
         src/stringtool.cpp
@@ -13,6 +16,9 @@ add_executable(entry_test
         test/catch.hpp
         test/test.cpp)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    target_link_libraries(entry_test gcov)
-endif()
+set(COVERAGE_EXCLUDES '${CMAKE_CURRENT_SOURCE_DIR}/test/*' '/usr/include/*' 'v1/*')
+include(CodeCoverage)
+APPEND_COVERAGE_COMPILER_FLAGS()
+setup_target_for_coverage(NAME ${PROJECT_NAME}_coverage
+        EXECUTABLE ${TEST_TARGET} coverage)
+
